@@ -1,6 +1,6 @@
 {
-  "name": "react",
-  "homepage": "https://goriola2010.github.io/Grocery-App",
+  "name": "grocery-app",
+  "homepage": "https://goriola2010.github.io/Grocery-App/",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -53,7 +53,6 @@ function Register() {
       validateField(key, value);
       if (value === "" || errors[key]) isValid = false;
     });
-
     if (isValid) {
       if (
         window.confirm("Account registered successfully! 🎉 Click OK to login.")

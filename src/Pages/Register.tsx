@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [form, setForm] = useState({
@@ -19,40 +18,47 @@ function Register() {
 
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const validateField = (name: string, value: string) => {
-    let error = "";
-
-    switch (name) {
-      case "name":
-        if (!value.trim()) error = "Full name is required.";
-        break;
-      case "email":
-        if (!/\S+@\S+\.\S+/.test(value)) error = "Enter a valid email address.";
-        break;
-      case "password":
-        if (value.length < 6 && !/\d/.test(value))
-          error =
-            "Password must be at least 6 characters long and contain a number.";
-        break;
-      case "confirmPassword":
-        if (value !== form.password) error = "Passwords do not match.";
-        break;
-    }
-    setErrors((prev) => ({ ...prev, [name]: error }));
-  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    validateField(name, value);
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const newErrors = {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    };
     let isValid = true;
 
     Object.entries(form).forEach(([key, value]) => {
-      validateField(key, value);
-      if (value === "" || errors[key]) isValid = false;
+      let error = "";
+
+      switch (key) {
+        case "name":
+          if (!value.trim()) error = "Full name is required.";
+          break;
+        case "email":
+          if (!/\S+@\S+\.\S+/.test(value))
+            error = "Enter a valid email address.";
+          break;
+        case "password":
+          if (value.length < 6 || !/\d/.test(value)) {
+            error =
+              "Password must be at least 6 characters long and contain a number.";
+          }
+          break;
+        case "confirmPassword":
+          if (value !== form.password) error = "Passwords do not match.";
+          break;
+      }
+      if (error) isValid = false;
+      newErrors[key] = error;
     });
+
+    setErrors(newErrors);
+
     if (isValid) {
       if (
         window.confirm("Account registered successfully! 🎉 Click OK to login.")
@@ -71,7 +77,6 @@ function Register() {
         <p className="text-sm text-center text-gray-500 mb-6">
           Register to start shopping fresh
         </p>
-
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -127,6 +132,8 @@ function Register() {
               <p className="text-red-500 text-sm mt-1">{errors.password}</p>
             )}
           </div>
+
+          {/* Confirm Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Confirm Password
@@ -147,6 +154,8 @@ function Register() {
               </p>
             )}
           </div>
+
+          {/* Show Password Toggle */}
           <div className="flex items-center text-sm">
             <input
               type="checkbox"
@@ -166,7 +175,6 @@ function Register() {
             Register
           </button>
         </form>
-
         <p className="text-center text-sm text-gray-600 mt-6">
           Already have an account?{" "}
           <Link

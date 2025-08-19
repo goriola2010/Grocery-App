@@ -1,16 +1,18 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -22,18 +24,21 @@ function Login() {
         body: JSON.stringify(form),
       });
 
+      if (!res.ok) {
+        throw new Error("Invalid credentials");
+      }
+
       const data = await res.json();
 
       if (data.token) {
         setSuccess("Login successful!");
-        console.log("Token:", data.token); // Save this in localStorage if needed
+        localStorage.setItem("token", data.token);
+        setTimeout(() => navigate("/"), 1000);
       } else {
         setError("Invalid username or password");
       }
     } catch (err) {
-      setError(
-        alert("Problem logging in please check your details and try again")
-      );
+      setError("Problem logging in. Please check your details and try again.");
     }
   };
 
@@ -55,6 +60,7 @@ function Login() {
         )}
 
         <form className="space-y-5" onSubmit={handleLogin}>
+          {/* Username */}
           <div>
             <label className="block text-gray-700 mb-1 text-sm font-medium">
               Username
@@ -70,12 +76,13 @@ function Login() {
             />
           </div>
 
+          {/* Password */}
           <div>
             <label className="block text-gray-700 mb-1 text-sm font-medium">
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Enter your password"
               value={form.password}
@@ -85,6 +92,21 @@ function Login() {
             />
           </div>
 
+          {/* Show Password */}
+          <div className="flex items-center text-sm">
+            <input
+              type="checkbox"
+              id="showPassword"
+              checked={showPassword}
+              onChange={() => setShowPassword(!showPassword)}
+              className="mr-2"
+            />
+            <label htmlFor="showPassword" className="text-gray-700">
+              Show Password
+            </label>
+          </div>
+
+          {/* Submit */}
           <button
             type="submit"
             className="w-full bg-[#013220] text-white font-semibold py-2 rounded-md hover:bg-[#025e2a] transition"
@@ -106,5 +128,4 @@ function Login() {
     </div>
   );
 }
-
 export default Login;

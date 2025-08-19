@@ -169,7 +169,7 @@ function Weekly() {
   );
 }
 
-function ItemCard({ item }) {
+function ItemCard({ item: string }) {
   const [count, setCount] = useState(0);
   const [showControls, setShowControls] = useState(false);
 

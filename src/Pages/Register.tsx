@@ -1,15 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+// Define the shape of form fields
+type FormFields = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 function Register() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormFields>({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<FormFields>({
     name: "",
     email: "",
     password: "",
@@ -18,44 +26,52 @@ function Register() {
 
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newErrors = {
+
+    // reset errors
+    const newErrors: FormFields = {
       name: "",
       email: "",
       password: "",
       confirmPassword: "",
     };
+
     let isValid = true;
 
-    Object.entries(form).forEach(([key, value]) => {
-      let error = "";
+    (Object.entries(form) as [keyof FormFields, string][]).forEach(
+      ([key, value]) => {
+        let error = "";
 
-      switch (key) {
-        case "name":
-          if (!value.trim()) error = "Full name is required.";
-          break;
-        case "email":
-          if (!/\S+@\S+\.\S+/.test(value))
-            error = "Enter a valid email address.";
-          break;
-        case "password":
-          if (value.length < 6 || !/\d/.test(value)) {
-            error =
-              "Password must be at least 6 characters long and contain a number.";
-          }
-          break;
-        case "confirmPassword":
-          if (value !== form.password) error = "Passwords do not match.";
-          break;
+        switch (key) {
+          case "name":
+            if (!value.trim()) error = "Full name is required.";
+            break;
+          case "email":
+            if (!/\S+@\S+\.\S+/.test(value))
+              error = "Enter a valid email address.";
+            break;
+          case "password":
+            if (value.length < 6 || !/\d/.test(value)) {
+              error =
+                "Password must be at least 6 characters long and contain a number.";
+            }
+            break;
+          case "confirmPassword":
+            if (value !== form.password) error = "Passwords do not match.";
+            break;
+        }
+
+        if (error) isValid = false;
+        newErrors[key] = error; // ✅ TS now knows key is valid
       }
-      if (error) isValid = false;
-      newErrors[key] = error;
-    });
+    );
 
     setErrors(newErrors);
 
@@ -78,6 +94,7 @@ function Register() {
           Register to start shopping fresh
         </p>
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Full Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
@@ -96,6 +113,8 @@ function Register() {
               <p className="text-red-500 text-sm mt-1">{errors.name}</p>
             )}
           </div>
+
+          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -114,6 +133,8 @@ function Register() {
               <p className="text-red-500 text-sm mt-1">{errors.email}</p>
             )}
           </div>
+
+          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -168,6 +189,7 @@ function Register() {
               Show Password
             </label>
           </div>
+
           <button
             type="submit"
             className="w-full bg-[#013220] text-white font-semibold py-2 rounded-md hover:bg-[#025e2a] transition"
@@ -175,6 +197,8 @@ function Register() {
             Register
           </button>
         </form>
+
+        {/* Login link */}
         <p className="text-center text-sm text-gray-600 mt-6">
           Already have an account?{" "}
           <Link

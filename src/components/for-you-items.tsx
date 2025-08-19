@@ -1,5 +1,14 @@
 import { useState } from "react";
-const forYou = [
+
+type Item = {
+  image: string;
+  name: string;
+  type: string;
+  gram: string;
+  price: string;
+};
+
+const forYou: Item[] = [
   {
     image: "",
     name: "Chicken Penne",
@@ -36,6 +45,7 @@ const forYou = [
     price: "20.29$",
   },
 ];
+
 function ForYouList() {
   return (
     <div className="overflow-x-auto sm:overflow-x-visible hide-scrollbar">
@@ -50,9 +60,10 @@ function ForYouList() {
   );
 }
 
-function ForYouItems({ item: string }) {
+function ForYouItems({ item }: { item: Item }) {
   const [count, setCount] = useState(0);
   const [showControls, setShowControls] = useState(false);
+
   return (
     <div className="m-5 relative bg-gray-200 shadow-md rounded-xl p-4 flex flex-col items-center space-y-3 transition-transform hover:scale-105">
       <div className="w-24 h-24">
@@ -105,4 +116,5 @@ function ForYouItems({ item: string }) {
     </div>
   );
 }
+
 export default ForYouList;

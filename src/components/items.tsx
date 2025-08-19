@@ -2,7 +2,15 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import beetroot from "../assets/Beetroot.png";
 
-const items = [
+interface Item {
+  image?: string;
+  name: string;
+  type: string;
+  gram: string;
+  price: string;
+}
+
+const items: Item[] = [
   {
     image: beetroot,
     name: "Beetroot",
@@ -104,14 +112,25 @@ function ItemList() {
   );
 }
 
-function Card({ item }) {
+// ✅ Correctly typed Card props
+function Card({ item }: { item: Item }) {
   const [count, setCount] = useState(0);
   const [showControls, setShowControls] = useState(false);
 
   return (
     <div className="m-5 min-w-[220px] relative bg-gray-200 shadow-md rounded-xl p-4 flex flex-col items-center space-y-3 transition-transform hover:scale-105">
       <div className="w-24 h-24">
-        <img src={item.image} className="object-contain w-full h-full" />
+        {item.image ? (
+          <img
+            src={item.image}
+            alt={item.name}
+            className="object-contain w-full h-full"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-300 flex items-center justify-center text-sm text-gray-600">
+            No Image
+          </div>
+        )}
       </div>
       <div className="text-center space-y-1">
         <h3 className="font-bold text-lg text-[#013220]">{item.name}</h3>

@@ -2,7 +2,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
-const items = [
+interface Item {
+  image: string;
+  name: string;
+  type: string;
+  gram: string;
+  price: string;
+}
+
+const items: Item[] = [
   {
     image: "",
     name: "Organic frozen",
@@ -102,18 +110,21 @@ function Weekly() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const search = params.get("search")?.toLowerCase() || "";
+
   const getVisibleItems = () => {
     if (selectedCategory === "Frozen food") return items.slice(0, 5);
     if (selectedCategory === "Vegetables") return items.slice(5, 10);
     if (selectedCategory === "Snacks") return items.slice(10, 15);
     return [];
   };
+
   const visibleItems = getVisibleItems();
   const filteredItems = visibleItems.filter(
     (item) =>
       item.name.toLowerCase().includes(search) ||
       item.type.toLowerCase().includes(search)
   );
+
   return (
     <div className="m-5" id="weekly">
       <div className="flex justify-between items-center mb-4 px-5">
@@ -169,14 +180,18 @@ function Weekly() {
   );
 }
 
-function ItemCard({ item: string }) {
+function ItemCard({ item }: { item: Item }) {
   const [count, setCount] = useState(0);
   const [showControls, setShowControls] = useState(false);
 
   return (
     <div className="m-5 relative bg-gray-200 shadow-md rounded-xl p-4 flex flex-col items-center space-y-3 transition-transform hover:scale-105">
       <div className="w-24 h-24">
-        <img src={item.image} className="object-contain w-full h-full" />
+        <img
+          src={item.image}
+          alt={item.name}
+          className="object-contain w-full h-full"
+        />
       </div>
       <div className="text-center space-y-1">
         <h3 className="font-bold text-lg text-[#013220]">{item.name}</h3>
@@ -226,4 +241,5 @@ function ItemCard({ item: string }) {
     </div>
   );
 }
+
 export default Weekly;
